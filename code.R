@@ -74,8 +74,8 @@ rM$setTemplate(
 
     opts.options.target = '#' + opts.dom
 
-    //handle date data
-    if( opts.options.x_accessor === 'date' && typeof opts.options.data === 'string' ) {
+    //handle date data - crude but works for now
+    if( opts.options.x_accessor === 'date' && typeof opts.options.data[0][opts.options.x_accessor] ) {
       opts.options.data = convert_dates( opts.options.data, 'date' );
     }
     
@@ -101,14 +101,53 @@ rM
 
 #rM$publish( "rCharts + metrics.js", id = "b826d93166334528f226" )
 
+rM <- rChartsMetrics$new()
+rM$setLib('http://timelyportfolio.github.io/rCharts_metrics')
+#rM$setLib('.')
+rM$lib = 'metrics'
+rM$LIB$name = 'metrics'
+rM$setTemplate(
+  script = "
+    <script>
+
+    var opts = {{{ opts }}};
+    opts.options.data =  {{{ data }}};
+
+    opts.options.target = '#' + opts.dom
+
+    //handle date data - crude but works for now
+    if( opts.options.x_accessor === 'date' && typeof opts.options.data[0][opts.options.x_accessor] ) {
+      opts.options.data = convert_dates( opts.options.data, 'date' );
+    }
+    
+    data_graphic(
+      opts.options
+    )
+    </script>
+  "
+)
+
+
 
 rM$set(
-  data = getSymbols('DGS10',src = 'FRED', auto.assign = F)
+  data = na.omit(getSymbols('DGS10',src = 'FRED', auto.assign = F)["2010::",])
   ,options = list(
     x_accessor = "date"
     ,y_accessor = "DGS10"
     ,width = 600
     ,height = 400
-    ,title = 'US 10y Treasury Yield (source: St. Louis Federal Reserve)'
+    ,title = 'US 10y Yield (source: St. Louis Federal Reserve)'
   )
 )
+rM
+
+
+rM$set(
+  options = list(
+    area = FALSE
+    ,show_confidence_band =  "#!['l', 'u']!#"
+  )
+)
+rM
+
+#rM$publish ( "rCharts + metrics.js using xts data")
