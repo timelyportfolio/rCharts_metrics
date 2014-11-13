@@ -1,0 +1,12 @@
+metrics:
+  jshead:
+    - js/d3.v3.min.js
+    - js/metrics-graphics.min.js
+  css:
+    - css/metrics-graphics.css
+  cdn:
+    jshead:
+      - http://d3js.org/d3.v3.min.js
+      - http://timelyportfolio.github.io/rCharts_metrics/js/metrics-graphics.min.js
+    css:
+      - http://timelyportfolio.github.io/rCharts_techan/css/metrics-graphics.css
