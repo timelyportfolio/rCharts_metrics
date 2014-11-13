@@ -1,6 +1,7 @@
 library(rCharts)
 library(jsonlite)
-library(xts)
+library(quantmod)
+library(pipeR)
 
 #set up rCharts
 #key is to define how to handle the data
@@ -13,7 +14,15 @@ rChartsMetrics <- setRefClass(
     },
     getPayload = function (chartId) {
       # use jsonlite
-      data = jsonlite::toJSON( params$data )
+      if(is.xts(params$data)){
+        data = jsonlite::toJSON( data.frame(
+          date = format(index(params$data))
+          ,params$data
+        ))
+      } else {
+        data = jsonlite::toJSON( params$data )
+      }
+      
       chart = toChain(params$chart, 'myChart')
       opts = toJSON2(params[!(names(params) %in% c('data', 'chart'))])
       list(opts = opts, data = data, chart = chart, chartId = chartId)
@@ -49,12 +58,11 @@ rChartsMetrics <- setRefClass(
   )
 )
 
-
-# now make a rChart with our rpart
+# now make a rChart with our rChartsMetrics
 
 rM <- rChartsMetrics$new()
-#rM$setLib('http://timelyportfolio.github.io/rCharts_metrics')
-rM$setLib('.')
+rM$setLib('http://timelyportfolio.github.io/rCharts_metrics')
+#rM$setLib('.')
 rM$lib = 'metrics'
 rM$LIB$name = 'metrics'
 rM$setTemplate(
@@ -63,7 +71,13 @@ rM$setTemplate(
 
     var opts = {{{ opts }}};
     opts.options.data =  {{{ data }}};
+
     opts.options.target = '#' + opts.dom
+
+    //handle date data
+    if( opts.options.x_accessor === 'date' && typeof opts.options.data === 'string' ) {
+      opts.options.data = convert_dates( opts.options.data, 'date' );
+    }
     
     data_graphic(
       opts.options
@@ -88,4 +102,13 @@ rM
 #rM$publish( "rCharts + metrics.js", id = "b826d93166334528f226" )
 
 
-
+rM$set(
+  data = getSymbols('DGS10',src = 'FRED', auto.assign = F)
+  ,options = list(
+    x_accessor = "date"
+    ,y_accessor = "DGS10"
+    ,width = 600
+    ,height = 400
+    ,title = 'US 10y Treasury Yield (source: St. Louis Federal Reserve)'
+  )
+)
