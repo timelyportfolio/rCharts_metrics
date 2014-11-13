@@ -85,7 +85,7 @@ rM$set(
 )
 rM
 
-#rM$publish( "rCharts + metrics.js" )
+#rM$publish( "rCharts + metrics.js", id = "b826d93166334528f226" )
 
 
 

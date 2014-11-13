@@ -9,6 +9,6 @@ metrics:
     jshead:
       - http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js
       - http://d3js.org/d3.v3.min.js
-      - http://mozilla.github.io/metrics-graphics/js/metrics-graphics.js
+      - http://timelyportfolio.github.io/rCharts_metrics/js/metrics-graphics.min.js
     css:
-      - http://mozilla.github.io/metrics-graphics/css/metrics-graphics.css
+      - http://timelyportfolio.github.io/rCharts_metrics/css/metrics-graphics.css
