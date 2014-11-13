@@ -145,9 +145,53 @@ rM
 rM$set(
   options = list(
     area = FALSE
-    ,show_confidence_band =  "#!['l', 'u']!#"
+    # if confidence band in data columns such as l for lower and u for upper
+    #,show_confidence_band =  "#!['l', 'u']!#"
   )
 )
 rM
 
-#rM$publish ( "rCharts + metrics.js using xts data")
+rM <- rChartsMetrics$new()
+rM$setLib('http://timelyportfolio.github.io/rCharts_metrics')
+#rM$setLib('.')
+rM$lib = 'metrics'
+rM$LIB$name = 'metrics'
+rM$setTemplate(
+  script = "
+  <script>
+  
+  var opts = {{{ opts }}};
+  opts.options.data =  {{{ data }}};
+  
+  opts.options.target = '#' + opts.dom
+  
+  //handle date data - crude but works for now
+  if( opts.options.x_accessor === 'date' && typeof opts.options.data[0][opts.options.x_accessor] ) {
+  opts.options.data = convert_dates( opts.options.data, 'date' );
+  }
+  
+  data_graphic(
+  opts.options
+  )
+  </script>
+  "
+)
+
+rM$set(
+  data = data.frame( mtcars )
+  ,options = list(
+    chart_type = 'point'
+    ,title = 'mtcars from R'
+    ,x_accessor = 'hp'
+    ,y_accessor = 'mpg'
+    ,color_accessor = 'cyl'
+    ,color_type = 'category'
+    ,y_rug = T
+    ,x_rug = T
+    ,height=400
+    ,width=400
+    ,least_squares = T
+  )
+)
+rM
+#rM$publish ( "rCharts + metrics.js using mtcars")
